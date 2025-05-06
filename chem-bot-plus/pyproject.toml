@@ -1,0 +1,15 @@
+[project]
+name = "chem-bot-plus"
+version = "0.1.0"
+description = "chem-bot-plus"
+readme = "README.md"
+requires-python = ">=3.8, <4.0"
+
+[tool.nonebot]
+adapters = [
+    { name = "Console", module_name = "nonebot.adapters.console" },
+    # {name = "Satori", module_name = "nonebot.adapters.satori"},
+    {name = "OneBot V11", module_name = "nonebot.adapters.onebot.v11"},
+]
+plugins = ["nonebot_plugin_repesix"]
+plugin_dirs = ["chem-bot-plus/plugins"]
