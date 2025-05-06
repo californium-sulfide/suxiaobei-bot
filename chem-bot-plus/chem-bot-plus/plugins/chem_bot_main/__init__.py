@@ -149,35 +149,35 @@ async def group_message_handler(event: GroupMessageEvent, bot: Bot):
 			
 			img2=image_symmetrize(img,direction)
 			await genshin.finish(MessageSegment.image(file=img2))
-""" 
-	if (
-		re.search(r"^[绷崩蚌]$", text)
-		or re.search(r"^奶龙$", text)
-		or re.search(r"^郑.{1,2}$", text)
-		or re.search(r"^再.*踢了$", text)
-	):
 
-		data = load_data("kick")
-		for i in range(len(data)):
-			if data[i][0] == str(event.user_id) and data[i][1] == str(event.group_id):
-				if int(data[i][2]) >= 3:
-					await bot.send(event, "踢了(3/3)", reply_message=True)
-					await bot.set_group_ban(
-						group_id=group_id, user_id=event.user_id, duration=15
-					)
-					data[i][2] = "1"
-				else:
-					await bot.send(
-						event, f"再发踢了({int(data[i][2])}/3)", reply_message=True
-					)
-					data[i][2] = str(int(data[i][2]) + 1)
-				break
-		else:
-			data.append([str(event.user_id), str(event.group_id), "2"])
-			await bot.send(event, "再发踢了(1/3)", reply_message=True)
-		save_data("kick", data)
-		return
- """
+	# if (
+	# 	re.search(r"^[绷崩蚌]$", text)
+	# 	or re.search(r"^奶龙$", text)
+	# 	or re.search(r"^郑.{1,2}$", text)
+	# 	or re.search(r"^再.*踢了$", text)
+	# ):
+
+	# 	data = load_data("kick")
+	# 	for i in range(len(data)):
+	# 		if data[i][0] == str(event.user_id) and data[i][1] == str(event.group_id):
+	# 			if int(data[i][2]) >= 3:
+	# 				await bot.send(event, "踢了(3/3)", reply_message=True)
+	# 				await bot.set_group_ban(
+	# 					group_id=group_id, user_id=event.user_id, duration=15
+	# 				)
+	# 				data[i][2] = "1"
+	# 			else:
+	# 				await bot.send(
+	# 					event, f"再发踢了({int(data[i][2])}/3)", reply_message=True
+	# 				)
+	# 				data[i][2] = str(int(data[i][2]) + 1)
+	# 			break
+	# 	else:
+	# 		data.append([str(event.user_id), str(event.group_id), "2"])
+	# 		await bot.send(event, "再发踢了(1/3)", reply_message=True)
+	# 	save_data("kick", data)
+	# 	return
+
 	# 关键词回复
 	keywords.setdefault(group_id, [])
 	for pair in keywords[group_id]:
