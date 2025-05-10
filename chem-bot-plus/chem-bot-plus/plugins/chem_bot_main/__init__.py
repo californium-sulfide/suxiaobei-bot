@@ -18,6 +18,7 @@ from nonebot.adapters.onebot.v11 import (
 )
 from .database import save_data, load_data
 from .imageprocess import image_symmetrize
+from .htmlGenerate import capture_html_screenshot
 import re, random
 
 
@@ -34,30 +35,30 @@ config = get_plugin_config(Config)
 keywords: dict[int, list[list[str]]] = {}
 whitelist_group:list[int]=[]
 
-notifyhandle = on_notice()
+# notifyhandle = on_notice()
 
 
-@notifyhandle.handle()
-async def n_handler(event: NotifyEvent, bot: Bot):
-	# 戳一戳
-	if event.sub_type == "poke":
-		pokeevent: PokeNotifyEvent = event  # type: ignore
-		target = pokeevent.target_id
-		operator = pokeevent.user_id
-		if str(target) == bot.self_id:
-			await notifyhandle.finish(
-				MessageSegment.at(operator) + MessageSegment.text(" 戳牛魔")
-			)
-			# await bot.call_api("group_poke", message={"group_id": event.group_id, "user_id": operator})
-			# await notifyhandle.finish(f'[CQ:poke,qq={operator}]')
-		else:
-			r = random.randint(1, 5)
-			if r == 1:
-				await notifyhandle.finish(
-					MessageSegment.at(operator)
-					+ MessageSegment.text(" 不准戳 ")
-					+ MessageSegment.at(target)
-				)
+# @notifyhandle.handle()
+# async def n_handler(event: NotifyEvent, bot: Bot):
+# 	# 戳一戳
+# 	if event.sub_type == "poke":
+# 		pokeevent: PokeNotifyEvent = event  # type: ignore
+# 		target = pokeevent.target_id
+# 		operator = pokeevent.user_id
+# 		if str(target) == bot.self_id:
+# 			await notifyhandle.finish(
+# 				MessageSegment.at(operator) + MessageSegment.text(" 戳牛魔")
+# 			)
+# 			# await bot.call_api("group_poke", message={"group_id": event.group_id, "user_id": operator})
+# 			# await notifyhandle.finish(f'[CQ:poke,qq={operator}]')
+# 		else:
+# 			r = random.randint(1, 5)
+# 			if r == 1:
+# 				await notifyhandle.finish(
+# 					MessageSegment.at(operator)
+# 					+ MessageSegment.text(" 不准戳 ")
+# 					+ MessageSegment.at(target)
+# 				)
 
 genshin = on_message()
 @genshin.handle()
@@ -148,6 +149,22 @@ async def group_message_handler(event: GroupMessageEvent, bot: Bot):
 					direction='左'
 			
 			img2=image_symmetrize(img,direction)
+			await genshin.finish(MessageSegment.image(file=img2))
+		if command =="/咸鱼" or command=="/闲鱼" or command=="/xy":
+			messager:list[dict]= (await bot.get_msg(message_id=event.message_id))["message"]
+			replyseg=[seg for seg in messager if seg['type']=='reply']
+			if len(replyseg)<=0:
+				await genshin.finish("请选择消息~")
+			replyid=int(replyseg[0]['data']['id'])
+			imgmessage:list[dict]=(await bot.get_msg(message_id=replyid))["message"]
+			imgseg=[seg for seg in imgmessage if seg['type']=='image']
+			if len(imgseg)<=0:
+				await genshin.finish("请选择图片~")
+			img:str=(await bot.get_image(file=imgseg[0]['data']['file']))['file']
+			overlap_text="卖掉了"
+			if len(commands)>=2:
+				overlap_text=commands[1]
+			img2=capture_html_screenshot(img,overlap_text)
 			await genshin.finish(MessageSegment.image(file=img2))
 
 	# if (
